@@ -2,7 +2,7 @@ import bcryptjs from "bcryptjs";
 import USER from "../models/user.js";
 import { errorHandler } from "../utils/error-handler.js";
 import jwt from "jsonwebtoken";
-const isSecure = process.env.production || true;
+const isSecure = process.env.production === "true" ? true : false;
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
