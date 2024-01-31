@@ -1,0 +1,4 @@
+**/node_modules
+
+# ignore the .env file from client and server
+**/.env
