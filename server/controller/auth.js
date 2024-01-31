@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import USER from "../models/user.js";
 import { errorHandler } from "../utils/error-handler.js";
 import jwt from "jsonwebtoken";
+const isSecure = process.env.production || true;
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -56,8 +57,6 @@ export const login = async (req, res, next) => {
 
     const { password: hashedPassword, ...rest } = validUser._doc;
 
-    const isSecure = req.secure || req.headers["x-forwarded-proto"] === "https";
-
     res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -81,8 +80,6 @@ export const google = async (req, res, next) => {
     if (existingUser) {
       const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET);
       const { password, ...rest } = existingUser._doc;
-      const isSecure =
-        req.secure || req.headers["x-forwarded-proto"] === "https";
 
       res
         .cookie("access_token", token, {
@@ -120,9 +117,6 @@ export const google = async (req, res, next) => {
 
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password: hpass, ...rest } = newUser._doc;
-
-      const isSecure =
-        req.secure || req.headers["x-forwarded-proto"] === "https";
 
       res
         .cookie("access_token", token, {
