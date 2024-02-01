@@ -6,9 +6,27 @@ import {
 } from "firebase/storage";
 import { useState } from "react";
 import { app } from "../firebase";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const CreateListing = () => {
-  const [listingData, setListingData] = useState({ imageURLs: [] });
+  const { user } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const [listingData, setListingData] = useState({
+    imageURLs: [],
+    name: "",
+    description: "",
+    address: "",
+    type: "rent",
+    parking: false,
+    furnished: false,
+    offer: false,
+    bedrooms: 1,
+    bathrooms: 1,
+    regularPrice: 50,
+    discountPrice: 0,
+  });
+
   const [images, setImages] = useState([]);
   const [onImagesUpload, setOnImagesUpload] = useState({
     loading: false,
@@ -16,8 +34,21 @@ const CreateListing = () => {
     errorMsg: "",
   });
 
+  const [onCreateListing, setOnCreateListing] = useState({
+    loading: false,
+    error: false,
+    errorMsg: "",
+  });
+
   const handleUploadImages = () => {
     setOnImagesUpload({ loading: true, error: false, errorMsg: "" });
+
+    if (images.length === 0)
+      return setOnImagesUpload({
+        loading: false,
+        error: true,
+        errorMsg: "PLease select at least one image!",
+      });
 
     if (images.length > 0 && images.length + listingData.imageURLs.length < 7) {
       const promises = [];
@@ -77,12 +108,98 @@ const CreateListing = () => {
     });
   };
 
+  const handleChange = (e) => {
+    if (e.target.id === "sell" || e.target.id === "rent") {
+      setListingData({
+        ...listingData,
+        type: e.target.id,
+      });
+    }
+
+    if (
+      e.target.id === "parking" ||
+      e.target.id === "furnished" ||
+      e.target.id === "offer"
+    ) {
+      setListingData({
+        ...listingData,
+        [e.target.id]: e.target.checked,
+      });
+    }
+
+    if (e.target.type === "number") {
+      setListingData({
+        ...listingData,
+        [e.target.id]: e.target.value === "" ? "" : Number(e.target.value),
+      });
+    }
+
+    if (e.target.type === "text" || e.target.type === "textarea") {
+      setListingData({
+        ...listingData,
+        [e.target.id]: e.target.value,
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setOnCreateListing({ loading: true, error: false, errorMsg: "" });
+
+    if (images.length === 0 || listingData.imageURLs.length === 0)
+      return setOnCreateListing({
+        loading: false,
+        error: true,
+        errorMsg: "Please upload at least one image!",
+      });
+    if (listingData.discountPrice > listingData.regularPrice)
+      return setOnCreateListing({
+        loading: false,
+        error: true,
+        errorMsg: "Discount price can't be greater than regular price!",
+      });
+
+    try {
+      const res = await fetch("http://localhost:8888/api/listing/create", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...listingData, userRef: user._id }),
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        setOnCreateListing({
+          loading: false,
+          error: true,
+          errorMsg: data.message,
+        });
+      } else {
+        setOnCreateListing({
+          loading: false,
+          error: false,
+          errorMsg: "",
+        });
+        navigate(`/listing/${data.data._id}`);
+      }
+    } catch (error) {
+      setOnCreateListing({
+        loading: false,
+        error: true,
+        errorMsg: "Something went wrong!",
+      });
+    }
+  };
+
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-center my-7 text-red-400">
         Create a Listing
       </h1>
-      <form className="flex gap-4 flex-col sm:flex-row">
+      <form onSubmit={handleSubmit} className="flex gap-4 flex-col sm:flex-row">
         <div className="flex flex-col gap-4 flex-1">
           <div className="flex flex-col gap-4">
             <input
@@ -90,6 +207,8 @@ const CreateListing = () => {
               placeholder="Name"
               id="name"
               required
+              minLength={3}
+              onChange={handleChange}
               className="p-3 border rounded-lg bg-slate-100"
             />
             <textarea
@@ -97,6 +216,8 @@ const CreateListing = () => {
               placeholder="Description"
               id="description"
               required
+              minLength={3}
+              onChange={handleChange}
               className="p-3 border rounded-lg bg-slate-100"
             />
             <input
@@ -104,6 +225,8 @@ const CreateListing = () => {
               placeholder="Address"
               id="address"
               required
+              minLength={3}
+              onChange={handleChange}
               className="p-3 border rounded-lg bg-slate-100"
             />
           </div>
@@ -114,7 +237,8 @@ const CreateListing = () => {
                 type="checkbox"
                 name="type"
                 id="sell"
-                required
+                onChange={handleChange}
+                checked={listingData.type === "sell"}
                 className="w-5"
               />
               <label htmlFor="sell">Sell</label>
@@ -124,7 +248,8 @@ const CreateListing = () => {
                 type="checkbox"
                 name="type"
                 id="rent"
-                required
+                onChange={handleChange}
+                checked={listingData.type === "rent"}
                 className="w-5"
               />
               <label htmlFor="rent">Rent</label>
@@ -134,7 +259,8 @@ const CreateListing = () => {
                 type="checkbox"
                 name="parking"
                 id="parking"
-                required
+                onChange={handleChange}
+                checked={listingData.parking}
                 className="w-5"
               />
               <label htmlFor="parking">Parking spot</label>
@@ -144,7 +270,8 @@ const CreateListing = () => {
                 type="checkbox"
                 name="furnished"
                 id="furnished"
-                required
+                onChange={handleChange}
+                checked={listingData.furnished}
                 className="w-5"
               />
               <label htmlFor="furnished">Furnished</label>
@@ -154,7 +281,8 @@ const CreateListing = () => {
                 type="checkbox"
                 name="offer"
                 id="offer"
-                required
+                onChange={handleChange}
+                checked={listingData.offer}
                 className="w-5"
               />
               <label htmlFor="offer">Offer</label>
@@ -167,7 +295,8 @@ const CreateListing = () => {
                 type="number"
                 min={1}
                 max={10}
-                defaultValue={1}
+                onChange={handleChange}
+                value={listingData.bedrooms}
                 id="bedrooms"
                 required
                 className="p-3 border rounded-lg bg-slate-100"
@@ -179,12 +308,13 @@ const CreateListing = () => {
                 type="number"
                 min={1}
                 max={10}
-                defaultValue={1}
+                onChange={handleChange}
+                value={listingData.bathrooms}
                 id="bathrooms"
                 required
                 className="p-3 border rounded-lg bg-slate-100"
               />
-              <label htmlFor="bedrooms">Baths</label>
+              <label htmlFor="bathrooms">Baths</label>
             </div>
 
             <div className="flex gap-2 items-center">
@@ -192,17 +322,43 @@ const CreateListing = () => {
                 type="number"
                 min={1}
                 max={1000000}
-                id="regularprice"
+                onChange={handleChange}
+                value={listingData.regularPrice}
+                id="regularPrice"
                 required
                 className="p-3 border rounded-lg bg-slate-100"
               />
               <div className="flex flex-col gap-0">
-                <label htmlFor="bedrooms">Regular price</label>
-                <span className="text-xs text-center text-slate-700">
-                  ($ /Month)
-                </span>
+                <label htmlFor="regularPrice">Regular price</label>
+                {listingData.type === "rent" && (
+                  <span className="text-xs text-center text-slate-700">
+                    ($ /Month)
+                  </span>
+                )}
               </div>
             </div>
+
+            {listingData.offer && (
+              <div className="flex gap-2 items-center">
+                <input
+                  type="number"
+                  min={0}
+                  max={1000000}
+                  onChange={handleChange}
+                  value={listingData.discountPrice}
+                  id="discountPrice"
+                  className="p-3 border rounded-lg bg-slate-100"
+                />
+                <div className="flex flex-col gap-0">
+                  <label htmlFor="discountPrice">Discount price</label>
+                  {listingData.type === "rent" && (
+                    <span className="text-xs text-center text-slate-700">
+                      ($ /Month)
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -256,9 +412,15 @@ const CreateListing = () => {
               </div>
             ))}
 
-          <button className="p-3 uppercase rounded-lg bg-red-400 text-white hover:opacity-95 disabled:opacity-80">
-            create listing
+          <button
+            disabled={onCreateListing.loading || onImagesUpload.loading}
+            className="p-3 uppercase rounded-lg bg-red-400 text-white hover:opacity-95 disabled:opacity-80"
+          >
+            {onCreateListing.loading ? "Creating..." : "Create listing"}
           </button>
+          <span className="text-center text-red-400 text-sm">
+            {onCreateListing.error ? onCreateListing.errorMsg : ""}
+          </span>
         </div>
       </form>
     </main>
