@@ -11,7 +11,7 @@ const Header = () => {
       <nav className="flex justify-between items-center max-w-4xl mx-auto p-3">
         <h1 className="text-sm sm:text-xl font-bold cursor-pointer flex flex-wrap">
           <span className="text-slate-700">
-            Code<sapn className="text-slate-400">x</sapn>
+            Code<span className="text-slate-400">x</span>
           </span>
           <span className="text-red-400">Estate</span>
         </h1>
