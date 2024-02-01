@@ -5,6 +5,7 @@ import cors from "cors";
 import db from "./DB.js";
 import authRoute from "./routes/auth.js";
 import userRoute from "./routes/user.js";
+import listingRoutes from "./routes/listing.js";
 const PORT = 8888;
 
 const app = express();
@@ -43,6 +44,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
+app.use("/api/listing", listingRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
