@@ -11,29 +11,44 @@ const CreateListing = () => {
               type="text"
               placeholder="Name"
               id="name"
+              required
               className="p-3 border rounded-lg bg-slate-100"
             />
             <textarea
               type="text"
               placeholder="Description"
               id="description"
+              required
               className="p-3 border rounded-lg bg-slate-100"
             />
             <input
               type="text"
               placeholder="Address"
               id="address"
+              required
               className="p-3 border rounded-lg bg-slate-100"
             />
           </div>
 
           <div className="flex gap-6 flex-wrap">
             <div className="flex gap-2">
-              <input type="checkbox" name="type" id="sell" className="w-5" />
+              <input
+                type="checkbox"
+                name="type"
+                id="sell"
+                required
+                className="w-5"
+              />
               <label htmlFor="sell">Sell</label>
             </div>
             <div className="flex gap-2">
-              <input type="checkbox" name="type" id="rent" className="w-5" />
+              <input
+                type="checkbox"
+                name="type"
+                id="rent"
+                required
+                className="w-5"
+              />
               <label htmlFor="rent">Rent</label>
             </div>
             <div className="flex gap-2">
@@ -41,6 +56,7 @@ const CreateListing = () => {
                 type="checkbox"
                 name="parking"
                 id="parking"
+                required
                 className="w-5"
               />
               <label htmlFor="parking">Parking spot</label>
@@ -50,12 +66,19 @@ const CreateListing = () => {
                 type="checkbox"
                 name="furnished"
                 id="furnished"
+                required
                 className="w-5"
               />
               <label htmlFor="furnished">Furnished</label>
             </div>
             <div className="flex gap-2">
-              <input type="checkbox" name="offer" id="offer" className="w-5" />
+              <input
+                type="checkbox"
+                name="offer"
+                id="offer"
+                required
+                className="w-5"
+              />
               <label htmlFor="offer">Offer</label>
             </div>
           </div>
@@ -68,6 +91,7 @@ const CreateListing = () => {
                 max={10}
                 defaultValue={1}
                 id="bedrooms"
+                required
                 className="p-3 border rounded-lg bg-slate-100"
               />
               <label htmlFor="bedrooms">Beds</label>
@@ -79,6 +103,7 @@ const CreateListing = () => {
                 max={10}
                 defaultValue={1}
                 id="bathrooms"
+                required
                 className="p-3 border rounded-lg bg-slate-100"
               />
               <label htmlFor="bedrooms">Baths</label>
@@ -90,6 +115,7 @@ const CreateListing = () => {
                 min={1}
                 max={1000000}
                 id="regularprice"
+                required
                 className="p-3 border rounded-lg bg-slate-100"
               />
               <div className="flex flex-col gap-0">

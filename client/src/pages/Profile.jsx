@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { app } from "../firebase";
 import {
   getStorage,
@@ -212,6 +213,12 @@ const Profile = () => {
         >
           {loading ? "Updating..." : "Update"}
         </button>
+        <Link
+          to="/createlisting"
+          className="bg-red-400 text-white text-center p-3 rounded-lg uppercase hover:opacity-95"
+        >
+          Add Listing
+        </Link>
       </form>
       <p className="text-sm text-center text-red-700 mt-2">
         {error ? errorMsg : ""}
