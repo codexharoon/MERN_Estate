@@ -4,12 +4,13 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { app } from "../firebase";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateListing = () => {
+const UpdateListing = () => {
+  const { lid } = useParams();
   const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [listingData, setListingData] = useState({
@@ -160,14 +161,17 @@ const CreateListing = () => {
       });
 
     try {
-      const res = await fetch("http://localhost:8888/api/listing/create", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...listingData, userRef: user._id }),
-      });
+      const res = await fetch(
+        `http://localhost:8888/api/listing/update/${lid}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(listingData),
+        }
+      );
 
       const data = await res.json();
 
@@ -183,7 +187,7 @@ const CreateListing = () => {
           error: false,
           errorMsg: "",
         });
-        navigate(`/listing/${data.data._id}`);
+        navigate(`/listing/${lid}`);
       }
     } catch (error) {
       setOnCreateListing({
@@ -194,10 +198,30 @@ const CreateListing = () => {
     }
   };
 
+  useEffect(() => {
+    const getSpecificListing = async () => {
+      const response = await fetch(
+        `http://localhost:8888/api/listing/get/${lid}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success === false) {
+      } else {
+        setListingData(data);
+      }
+    };
+    getSpecificListing();
+  }, []);
+
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-center my-7 text-red-400">
-        Create a Listing
+        Update a Listing
       </h1>
       <form onSubmit={handleSubmit} className="flex gap-4 flex-col sm:flex-row">
         <div className="flex flex-col gap-4 flex-1">
@@ -419,7 +443,7 @@ const CreateListing = () => {
             disabled={onCreateListing.loading || onImagesUpload.loading}
             className="p-3 uppercase rounded-lg bg-red-400 text-white hover:opacity-95 disabled:opacity-80"
           >
-            {onCreateListing.loading ? "Creating..." : "Create listing"}
+            {onCreateListing.loading ? "Updating..." : "Update listing"}
           </button>
           <span className="text-center text-red-400 text-sm">
             {onCreateListing.error ? onCreateListing.errorMsg : ""}
@@ -430,4 +454,4 @@ const CreateListing = () => {
   );
 };
 
-export default CreateListing;
+export default UpdateListing;
