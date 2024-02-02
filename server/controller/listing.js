@@ -32,3 +32,20 @@ export const getListings = async (req, res, next) => {
     return next(e);
   }
 };
+
+export const deleteListing = async (req, res, next) => {
+  try {
+    const checkListing = await LISTING.findById(req.params.id);
+    if (!checkListing) {
+      return next("404", "Listing not found!");
+    }
+
+    await LISTING.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "Listing deleted successfully",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
