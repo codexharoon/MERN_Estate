@@ -28,6 +28,13 @@ const Profile = () => {
   const [ImageError, setImageError] = useState(false);
   const [profileData, setProfileData] = useState({});
 
+  const [showListingData, setShowListingData] = useState([]);
+  const [onShowListing, setOnShowListing] = useState({
+    loading: false,
+    error: false,
+    errorMsg: "",
+  });
+
   const handleChange = (e) => {
     setProfileData({
       ...profileData,
@@ -153,6 +160,40 @@ const Profile = () => {
       handleUploadImage();
     }
   }, [image]);
+
+  const handleShowListing = async (id) => {
+    setOnShowListing({ loading: true, error: false, errorMsg: "" });
+    try {
+      const response = await fetch(
+        `http://localhost:8888/api/listing/all/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      if (data.success === false) {
+        setOnShowListing({
+          loading: false,
+          error: true,
+          errorMsg: data.message,
+        });
+      } else {
+        setOnShowListing({ loading: false, error: false, errorMsg: "" });
+        setShowListingData(data);
+      }
+    } catch (error) {
+      setOnShowListing({
+        loading: false,
+        error: true,
+        errorMsg: "Something went wrong! Please try again.",
+      });
+    }
+  };
+
+  const handleDeleteListing = async (id) => {};
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-6">Profile</h1>
@@ -229,6 +270,58 @@ const Profile = () => {
       <div className="flex justify-between mt-5 cursor-pointer font-semibold text-red-700">
         <span onClick={handleDelete}>Delete Account</span>
         <span onClick={handleLogout}>Sign out</span>
+      </div>
+
+      <div className="flex flex-col mt-2 gap-2">
+        <span
+          onClick={() => handleShowListing(user._id)}
+          className="text-center text-green-500 hover:opacity-80 cursor cursor-pointer"
+        >
+          {onShowListing.loading ? "Loading..." : "Show My Listings"}
+        </span>
+        <p className="text-red-400 text-center text-sm">
+          {onShowListing.error ? onShowListing.errorMsg : ""}
+        </p>
+
+        <div>
+          {showListingData && showListingData.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              <h2 className="text-2xl font-semibold text-center">Listings</h2>
+              {showListingData.map((listing, index) => (
+                <div
+                  className="border rounded-lg p-3 flex gap-4 justify-between items-center"
+                  key={listing._id}
+                >
+                  <Link to={`/listing/${listing._id}`}>
+                    <img
+                      src={listing.imageURLs[0]}
+                      alt="listing cover image"
+                      className="w-16 h-16 object-contain"
+                    />
+                  </Link>
+
+                  <Link to={`/listing/${listing._id}`} className="flex-1">
+                    <p className="hover:underline truncate ">{listing.name}</p>
+                  </Link>
+
+                  <div className="flex flex-col">
+                    <button className="uppercase text-green-500 hover:opacity-80">
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteListing(listing._id)}
+                      className="uppercase text-red-400 hover:opacity-80"
+                    >
+                      delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
       </div>
     </div>
   );
