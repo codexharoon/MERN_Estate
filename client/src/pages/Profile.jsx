@@ -192,7 +192,38 @@ const Profile = () => {
     }
   };
 
-  const handleDeleteListing = async (id) => {};
+  const handleDeleteListing = async (id) => {
+    setOnShowListing({ loading: true, error: false, errorMsg: "" });
+    try {
+      const response = await fetch(
+        `http://localhost:8888/api/listing/delete/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      if (data.success === false) {
+        setOnShowListing({
+          loading: false,
+          error: true,
+          errorMsg: data.message,
+        });
+      } else {
+        setOnShowListing({ loading: false, error: false, errorMsg: "" });
+        setShowListingData(
+          showListingData.filter((listing) => listing._id !== id)
+        );
+      }
+    } catch (error) {
+      setOnShowListing({
+        loading: false,
+        error: true,
+        errorMsg: "Something went wrong! Please try again.",
+      });
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
