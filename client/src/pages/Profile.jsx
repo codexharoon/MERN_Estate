@@ -336,9 +336,11 @@ const Profile = () => {
                   </Link>
 
                   <div className="flex flex-col">
-                    <button className="uppercase text-green-500 hover:opacity-80">
-                      Edit
-                    </button>
+                    <Link to={`/updatelisting/${listing._id}`}>
+                      <button className="uppercase text-green-500 hover:opacity-80">
+                        Edit
+                      </button>
+                    </Link>
                     <button
                       onClick={() => handleDeleteListing(listing._id)}
                       className="uppercase text-red-400 hover:opacity-80"
