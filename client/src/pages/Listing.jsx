@@ -15,11 +15,17 @@ import {
   FaChair,
 } from "react-icons/fa";
 
+import { useSelector } from "react-redux";
+import { Contact } from "../components";
+
 const Listing = () => {
   const { lid } = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const { user } = useSelector((state) => state.user);
+  const [contatClicked, setContactClicked] = useState(false);
 
   useEffect(() => {
     const getSpecificListing = async () => {
@@ -138,6 +144,17 @@ const Listing = () => {
                 <span>{listing.furnished ? "Furnished" : "No Furnished"}</span>
               </li>
             </ul>
+
+            {!contatClicked && user && user._id !== listing.userRef && (
+              <button
+                onClick={() => setContactClicked(true)}
+                className="bg-slate-800 text-white text-center p-3 mt-2 w-full rounded-lg hover:opacity-95"
+              >
+                Contact Landlord
+              </button>
+            )}
+
+            {contatClicked && <Contact listing={listing} />}
           </div>
         </div>
       )}

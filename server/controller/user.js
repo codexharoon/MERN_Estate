@@ -54,3 +54,17 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await USER.findById(req.params.id);
+
+    if (!user) {
+      return res.json(errorHandler(404, "User not found!"));
+    }
+
+    res.status(200).json(user);
+  } catch (e) {
+    next(e);
+  }
+};
