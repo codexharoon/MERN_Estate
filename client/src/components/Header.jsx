@@ -1,11 +1,29 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FaSearch } from "react-icons/fa";
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const { user } = useSelector((state) => state.user);
-  const searchRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmitSearch = (e) => {
+    e.preventDefault();
+
+    const searchParams = new URLSearchParams();
+    searchParams.set("searchTerm", searchTerm);
+
+    const searchQuery = searchParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const getSearchTerm = searchParams.get("searchTerm");
+
+    setSearchTerm(getSearchTerm || "");
+  }, [location.search]);
   return (
     <header className="bg-slate-200 shadow-md">
       <nav className="flex justify-between items-center max-w-4xl mx-auto p-3">
@@ -16,17 +34,20 @@ const Header = () => {
           <span className="text-red-400">Estate</span>
         </h1>
 
-        <form className="bg-slate-100 p-2 rounded-md flex items-center justify-center">
+        <form
+          onSubmit={handleSubmitSearch}
+          className="bg-slate-100 p-2 rounded-md flex items-center justify-center"
+        >
           <input
             type="text"
             placeholder="Search..."
-            ref={searchRef}
             className="bg-transparent border-none text-sm focus:outline-none w-20 sm:w-60"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <FaSearch
-            className="text-red-300"
-            onClick={() => searchRef.current.focus()}
-          />
+          <button>
+            <FaSearch className="text-red-300" />
+          </button>
         </form>
 
         <ul className="flex gap-4 text-slate-700">
