@@ -21,6 +21,13 @@ const Search = () => {
 
   const [listings, setListings] = useState([]);
 
+  const [showMore, setShowMore] = useState(false);
+  const [onMoreFetchListing, setOnMoreFetchListing] = useState({
+    loading: false,
+    error: null,
+    errorMsg: "",
+  });
+
   const handleChange = (e) => {
     if (
       e.target.id === "all" ||
@@ -79,6 +86,48 @@ const Search = () => {
     navigate(`/search?${searchQuery}`);
   };
 
+  const fetchMoreListings = async () => {
+    setOnMoreFetchListing({
+      loading: true,
+      error: false,
+      errorMsg: "",
+    });
+
+    try {
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set("skip", listings.length);
+
+      const response = await fetch(
+        `http://localhost:8888/api/listing/search?${searchParams.toString()}`
+      );
+      const data = await response.json();
+      if (data.success === false) {
+        setOnMoreFetchListing({
+          loading: false,
+          error: true,
+          errorMsg: data.message,
+        });
+      } else {
+        setOnMoreFetchListing({
+          loading: false,
+          error: false,
+          errorMsg: "",
+        });
+        setListings([...listings, ...data]);
+        if (data.length < 4) {
+          setShowMore(false);
+        }
+      }
+    } catch (e) {
+      setOnMoreFetchListing({
+        loading: false,
+        error: true,
+        errorMsg:
+          "An error occurred while fetching listings. Please try again.",
+      });
+    }
+  };
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const getSearchTerm = searchParams.get("searchTerm") || "";
@@ -119,12 +168,15 @@ const Search = () => {
             errorMsg: data.message,
           });
         } else {
-          setListings(data);
           setOnFetchListing({
             loading: false,
             error: false,
             errorMsg: "",
           });
+          setListings(data);
+          if (data.length > 4) {
+            setShowMore(true);
+          }
         }
       } catch (e) {
         setOnFetchListing({
@@ -251,7 +303,10 @@ const Search = () => {
             </select>
           </div>
 
-          <button className="p-3 bg-slate-700 text-white text-center uppercase rounded-lg hover:opacity-95">
+          <button
+            disabled={onFetchListing.loading}
+            className="p-3 bg-slate-700 text-white text-center uppercase rounded-lg hover:opacity-95 disabled:opacity-80"
+          >
             search
           </button>
         </form>
@@ -285,6 +340,21 @@ const Search = () => {
               <ListingCard listing={listing} key={listing._id} />
             ))}
         </div>
+
+        {showMore && (
+          <button
+            className="p-3 bg-slate-700 text-white text-center uppercase rounded-lg hover:opacity-95 disabled:opacity-80"
+            onClick={fetchMoreListings}
+            disabled={onMoreFetchListing.loading}
+          >
+            {onMoreFetchListing.loading ? "Loading..." : "Show More"}
+          </button>
+        )}
+        {onMoreFetchListing.error && !onMoreFetchListing.loading && (
+          <p className="text-center text-red-600 mt-5">
+            {onMoreFetchListing.errorMsg}
+          </p>
+        )}
       </div>
     </div>
   );
