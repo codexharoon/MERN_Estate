@@ -149,6 +149,8 @@ const Search = () => {
     });
 
     const fetchListings = async () => {
+      setShowMore(false);
+
       setOnFetchListing({
         loading: true,
         error: false,
@@ -176,6 +178,8 @@ const Search = () => {
           setListings(data);
           if (data.length > 4) {
             setShowMore(true);
+          } else {
+            setShowMore(false);
           }
         }
       } catch (e) {
