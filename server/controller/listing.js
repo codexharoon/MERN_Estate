@@ -92,3 +92,50 @@ export const updateListing = async (req, res, next) => {
     next(e);
   }
 };
+
+export const search = async (req, res) => {
+  try {
+    const searchTerm = req.query.searchTerm || "";
+    const sort = req.query.sort || "createdAt";
+    const order = req.query.order || "desc";
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = parseInt(req.query.skip) || 0;
+
+    let type = req.query.type;
+    if (type === undefined || type === "all") {
+      type = { $in: ["sell", "rent"] };
+    }
+
+    let parking = req.query.parking;
+    if (parking === undefined || parking === "false") {
+      parking = { $in: [false, true] };
+    }
+
+    let furnished = req.query.furnished;
+    if (furnished === undefined || furnished === "false") {
+      furnished = { $in: [false, true] };
+    }
+
+    let offer = req.query.offer;
+    if (offer === undefined || offer === "false") {
+      offer = { $in: [false, true] };
+    }
+
+    const listings = await LISTING.find({
+      name: { $regex: searchTerm, $options: "i" },
+      type,
+      offer,
+      parking,
+      furnished,
+    })
+      .sort({
+        [sort]: order,
+      })
+      .limit(limit)
+      .skip(skip);
+
+    res.status(200).json(listings);
+  } catch (e) {
+    next(e);
+  }
+};
