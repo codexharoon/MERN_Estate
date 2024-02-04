@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ListingCard } from "../components";
 
 const Search = () => {
   const [searchData, setSearchData] = useState({
@@ -139,9 +140,9 @@ const Search = () => {
   }, [location.search]);
 
   return (
-    <div className="flex flex-col sm:flex-row">
-      <form onSubmit={handleSubmit} className="flex-2">
-        <div className="p-7 flex flex-col gap-7 border-b-2 sm:border-r-2 h-auto sm:min-h-screen">
+    <div className="flex flex-col md:flex-row">
+      <div className="p-6 border-b-2 md:border-r-2 md:min-h-screen flex-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-7 ">
           <div className="flex items-center gap-2">
             <label htmlFor="searchterm" className="whitespace-nowrap">
               Search Term:
@@ -253,13 +254,37 @@ const Search = () => {
           <button className="p-3 bg-slate-700 text-white text-center uppercase rounded-lg hover:opacity-95">
             search
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
 
       <div className="p-7 flex-1">
         <h1 className="text-3xl font-semibold text-slate-600 border-b p-3">
           Listing Results:
         </h1>
+        {onFetchListing.loading && (
+          <p className="text-center text-slate-600 text-2xl mt-5">Loading...</p>
+        )}
+        {!onFetchListing.loading &&
+          !onFetchListing.error &&
+          listings.length === 0 && (
+            <p className="text-center text-slate-600 text-2xl mt-5">
+              No listings found!
+            </p>
+          )}
+        {onFetchListing.error && !onFetchListing.loading && (
+          <p className="text-center text-red-600 mt-5">
+            {onFetchListing.errorMsg}
+          </p>
+        )}
+        <div className="py-7 flex flex-wrap gap-5">
+          {!onFetchListing.error &&
+            !onFetchListing.loading &&
+            listings &&
+            listings.length > 0 &&
+            listings.map((listing) => (
+              <ListingCard listing={listing} key={listing._id} />
+            ))}
+        </div>
       </div>
     </div>
   );
