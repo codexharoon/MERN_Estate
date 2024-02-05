@@ -164,7 +164,7 @@ const UpdateListing = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:8888/api/listing/update/${lid}`,
+        `https://api-codexestate.vercel.app/api/listing/update/${lid}`,
         {
           method: "PUT",
           credentials: "include",
@@ -206,7 +206,7 @@ const UpdateListing = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8888/api/listing/get/${lid}`,
+          `https://api-codexestate.vercel.app/api/listing/get/${lid}`,
           {
             method: "GET",
             credentials: "include",

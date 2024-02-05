@@ -33,7 +33,7 @@ const Listing = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8888/api/listing/get/${lid}`,
+          `https://api-codexestate.vercel.app/api/listing/get/${lid}`,
           {
             method: "GET",
             credentials: "include",

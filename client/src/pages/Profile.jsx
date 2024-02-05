@@ -49,7 +49,7 @@ const Profile = () => {
       dispatch(userUpdateStart());
 
       const response = await fetch(
-        `http://localhost:8888/api/user/update/${user._id}`,
+        `https://api-codexestate.vercel.app/api/user/update/${user._id}`,
         {
           credentials: "include",
           method: "PUT",
@@ -86,7 +86,7 @@ const Profile = () => {
       dispatch(userDeleteStart());
 
       const response = await fetch(
-        `http://localhost:8888/api/user/delete/${user._id}`,
+        `https://api-codexestate.vercel.app/api/user/delete/${user._id}`,
         {
           credentials: "include",
           method: "DELETE",
@@ -113,10 +113,13 @@ const Profile = () => {
     if (!logoutConfirmation) return;
 
     try {
-      const response = await fetch("http://localhost:8888/api/auth/logout", {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://api-codexestate.vercel.app/api/auth/logout",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
       if (data.success === false) {
@@ -165,7 +168,7 @@ const Profile = () => {
     setOnShowListing({ loading: true, error: false, errorMsg: "" });
     try {
       const response = await fetch(
-        `http://localhost:8888/api/listing/all/${id}`,
+        `https://api-codexestate.vercel.app/api/listing/all/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -196,7 +199,7 @@ const Profile = () => {
     setOnShowListing({ loading: true, error: false, errorMsg: "" });
     try {
       const response = await fetch(
-        `http://localhost:8888/api/listing/delete/${id}`,
+        `https://api-codexestate.vercel.app/api/listing/delete/${id}`,
         {
           method: "DELETE",
           credentials: "include",

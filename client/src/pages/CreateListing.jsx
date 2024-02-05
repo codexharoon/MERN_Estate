@@ -160,14 +160,17 @@ const CreateListing = () => {
       });
 
     try {
-      const res = await fetch("http://localhost:8888/api/listing/create", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...listingData, userRef: user._id }),
-      });
+      const res = await fetch(
+        "https://api-codexestate.vercel.app/api/listing/create",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...listingData, userRef: user._id }),
+        }
+      );
 
       const data = await res.json();
 

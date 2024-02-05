@@ -98,7 +98,7 @@ const Search = () => {
       searchParams.set("skip", listings.length);
 
       const response = await fetch(
-        `http://localhost:8888/api/listing/search?${searchParams.toString()}`
+        `https://api-codexestate.vercel.app/api/listing/search?${searchParams.toString()}`
       );
       const data = await response.json();
       if (data.success === false) {
@@ -160,7 +160,7 @@ const Search = () => {
       try {
         const searchQuery = searchParams.toString();
         const response = await fetch(
-          `http://localhost:8888/api/listing/search?${searchQuery}`
+          `https://api-codexestate.vercel.app/api/listing/search?${searchQuery}`
         );
         const data = await response.json();
         if (data.success === false) {

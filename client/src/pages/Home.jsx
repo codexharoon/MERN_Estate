@@ -13,11 +13,11 @@ const Home = () => {
   const [saleListing, setSaleListing] = useState([]);
 
   useEffect(() => {
-    // Fetch recent listings
+    // Fetch recent offer listings
     const fetchRecentListings = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8888/api/listing/search?limit=4&offer=true"
+          "https://api-codexestate.vercel.app/api/listing/search?limit=4&offer=true"
         );
         const data = await response.json();
         setRecentListing(data);
@@ -33,7 +33,7 @@ const Home = () => {
     const fetchRentListings = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8888/api/listing/search?limit=4&type=rent"
+          "https://api-codexestate.vercel.app/api/listing/search?limit=4&type=rent"
         );
         const data = await response.json();
         setRentListing(data);
@@ -47,7 +47,7 @@ const Home = () => {
     const fetchSaleListings = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8888/api/listing/search?limit=4&type=sell"
+          "https://api-codexestate.vercel.app/api/listing/search?limit=4&type=sell"
         );
         const data = await response.json();
         setSaleListing(data);
@@ -76,83 +76,93 @@ const Home = () => {
         </Link>
       </div>
 
-      <div className="mt-16">
-        <Swiper navigation>
-          {recentListing &&
-            recentListing.length > 0 &&
-            recentListing.map((listing) => (
-              <SwiperSlide key={listing._id}>
-                <div
-                  style={{
-                    background: `url(${listing.imageURLs[0]})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    height: "400px",
-                  }}
-                ></div>
-              </SwiperSlide>
-            ))}
-        </Swiper>
-      </div>
-
-      <div className="p-3 mt-10 max-w-6xl mx-auto">
-        <h2 className="text-2xl text-slate-600 font-semibold">Recent offers</h2>
-        <Link
-          to={"/search?offer=true"}
-          className="text-blue-800 text-sm hover:underline"
-        >
-          Show more offers
-        </Link>
-
-        <div className="flex flex-wrap gap-4 py-3">
-          {recentListing &&
-            recentListing.length > 0 &&
-            recentListing.map((listing) => (
-              <ListingCard listing={listing} key={listing._id} />
-            ))}
+      {recentListing && recentListing.length > 0 && (
+        <div className="mt-16">
+          <Swiper navigation>
+            {recentListing &&
+              recentListing.length > 0 &&
+              recentListing.map((listing) => (
+                <SwiperSlide key={listing._id}>
+                  <div
+                    style={{
+                      background: `url(${listing.imageURLs[0]})`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      height: "400px",
+                    }}
+                  ></div>
+                </SwiperSlide>
+              ))}
+          </Swiper>
         </div>
-      </div>
+      )}
 
-      <div className="p-3 mt-10 max-w-6xl mx-auto">
-        <h2 className="text-2xl text-slate-600 font-semibold">
-          Recent places for rent
-        </h2>
-        <Link
-          to={"/search?type=rent"}
-          className="text-blue-800 text-sm hover:underline"
-        >
-          Show more places for rent
-        </Link>
+      {recentListing && recentListing.length > 0 && (
+        <div className="p-3 mt-10 max-w-6xl mx-auto">
+          <h2 className="text-2xl text-slate-600 font-semibold">
+            Recent offers
+          </h2>
+          <Link
+            to={"/search?offer=true"}
+            className="text-blue-800 text-sm hover:underline"
+          >
+            Show more offers
+          </Link>
 
-        <div className="flex flex-wrap gap-4 py-3">
-          {rentListing &&
-            rentListing.length > 0 &&
-            rentListing.map((listing) => (
-              <ListingCard listing={listing} key={listing._id} />
-            ))}
+          <div className="flex flex-wrap gap-4 py-3">
+            {recentListing &&
+              recentListing.length > 0 &&
+              recentListing.map((listing) => (
+                <ListingCard listing={listing} key={listing._id} />
+              ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="p-3 mt-10 max-w-6xl mx-auto">
-        <h2 className="text-2xl text-slate-600 font-semibold">
-          Recent places for sale
-        </h2>
-        <Link
-          to={"/search?type=sell"}
-          className="text-blue-800 text-sm hover:underline"
-        >
-          Show more places for sale
-        </Link>
+      {rentListing && (
+        <div className="p-3 mt-10 max-w-6xl mx-auto">
+          <h2 className="text-2xl text-slate-600 font-semibold">
+            Recent places for rent
+          </h2>
+          <Link
+            to={"/search?type=rent"}
+            className="text-blue-800 text-sm hover:underline"
+          >
+            Show more places for rent
+          </Link>
 
-        <div className="flex flex-wrap gap-4 py-3">
-          {saleListing &&
-            saleListing.length > 0 &&
-            saleListing.map((listing) => (
-              <ListingCard listing={listing} key={listing._id} />
-            ))}
+          <div className="flex flex-wrap gap-4 py-3">
+            {rentListing &&
+              rentListing.length > 0 &&
+              rentListing.map((listing) => (
+                <ListingCard listing={listing} key={listing._id} />
+              ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {saleListing && (
+        <div className="p-3 mt-10 max-w-6xl mx-auto">
+          <h2 className="text-2xl text-slate-600 font-semibold">
+            Recent places for sale
+          </h2>
+          <Link
+            to={"/search?type=sell"}
+            className="text-blue-800 text-sm hover:underline"
+          >
+            Show more places for sale
+          </Link>
+
+          <div className="flex flex-wrap gap-4 py-3">
+            {saleListing &&
+              saleListing.length > 0 &&
+              saleListing.map((listing) => (
+                <ListingCard listing={listing} key={listing._id} />
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -22,14 +22,17 @@ const Login = () => {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const response = await fetch("http://localhost:8888/api/auth/login", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(loginData),
-      });
+      const response = await fetch(
+        "https://api-codexestate.vercel.app/api/auth/login",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(loginData),
+        }
+      );
 
       const data = await response.json();
 

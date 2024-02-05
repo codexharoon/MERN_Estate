@@ -18,14 +18,17 @@ const Signup = () => {
     try {
       setLoading(true);
       setError(false);
-      const response = await fetch("http://localhost:8888/api/auth/signup", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(signUpData),
-      });
+      const response = await fetch(
+        "https://api-codexestate.vercel.app/api/auth/signup",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(signUpData),
+        }
+      );
 
       const data = await response.json();
 

@@ -16,7 +16,7 @@ const Contact = ({ listing }) => {
       setOnFetchListingOwner({ loading: true, error: false, errorMsg: "" });
       try {
         const response = await fetch(
-          `http://localhost:8888/api/user/get/${listing.userRef}`,
+          `https://api-codexestate.vercel.app/api/user/get/${listing.userRef}`,
           {
             method: "GET",
             credentials: "include",
