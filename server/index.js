@@ -12,10 +12,10 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://auth.codexharoon.com",
+  "https://estate.codexharoon.com",
   "https://codexharoon.com",
-  "https://codexauth.vercel.app",
-  "https://codexauth.netlify.app",
+  "https://codexestate.vercel.app",
+  "https://codexestate.netlify.app",
 ];
 app.use(
   cors({
@@ -39,7 +39,7 @@ app.use(cookieParser());
 db();
 
 app.get("/", (req, res) => {
-  res.send("Code x Auth API is Working!");
+  res.send("Code x Estate API is Working!");
 });
 
 app.use("/api/auth", authRoute);
